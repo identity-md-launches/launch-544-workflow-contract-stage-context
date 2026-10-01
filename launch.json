@@ -1,0 +1,22 @@
+{
+  "kind": "evm_project",
+  "token": {
+    "contract": "LaunchToken",
+    "name": "Guestbook Token",
+    "symbol": "GUEST",
+    "decimals": 18
+  },
+  "contracts": [
+    {
+      "contract": "Guestbook",
+      "constructorArgs": ["$token"]
+    }
+  ],
+  "pool": {
+    "pairedCurrency": "0x0000000000000000000000000000000000000000",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336"
+  },
+  "notes": "Onchain guestbook paid in the launch token. LaunchToken (src/LaunchToken.sol) is a fixed-supply ERC-20 with no constructor arguments: name 'Guestbook Token', symbol 'GUEST', 18 decimals, whole supply minted once to its deployer (the factory) in the constructor. It has no owner, mint, pause, blocklist, transfer fee or upgrade path. Its only non-standard surface is burn/burnFrom from OpenZeppelin ERC20Burnable, so supply can only decrease; reviewers should confirm this burn surface is acceptable for the launch token. Guestbook (src/Guestbook.sol) is the single application contract. Its constructor is Guestbook(address token_), nonpayable, and receives $token; it reverts on the zero address or an address without code, so it must deploy after the token. It stores the token as an immutable and grants no role to msg.sender (the factory). sign(string) stores a message of 1 to 280 bytes and burns exactly 10 tokens (10e18 minor units) from the signer through burnFrom, which requires a prior allowance to the guestbook. Entries are append-only. The guestbook has no owner, no privileged role, no pause, no withdraw and no upgrade path, holds no tokens and no ETH, and needs no initialization call; therefore no $owner argument is used. The pool pairs the token with native ETH (zero address). The factory supplies the liquidity position, the MerkleDistributor and the initialization-only pool guard; none of them is a project contract. The manifest fee of 3000 is the admission value; the pool opens at the network trading fee read by the factory. Supply, allocations, owner and policy values come from services, not from this manifest."
+}
